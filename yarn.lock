@@ -1792,6 +1792,20 @@
   resolved "https://registry.yarnpkg.com/@msgpackr-extract/msgpackr-extract-win32-x64/-/msgpackr-extract-win32-x64-3.0.3.tgz#0aa5502d547b57abfc4ac492de68e2006e417242"
   integrity sha512-x0fWaQtYp4E6sktbsdAqnehxDgEc/VwM7uLsRCYWaiGu0ykYdZPiS8zCWdnjHwyiumousxfBm4SO31eXqwEZhQ==
 
+"@ngrx/operators@^18.1.0":
+  version "18.1.0"
+  resolved "https://registry.yarnpkg.com/@ngrx/operators/-/operators-18.1.0.tgz#9149a22f736f75d97a07c249f34e94be48faff25"
+  integrity sha512-C4/57yiBigrFisrEWFA7XS8OgpGK2Vmvu7y6MYltLzK8FTr2r9FsTCG9oxlOHIxGzd5EJrzHNqqBzqVh/9/nww==
+  dependencies:
+    tslib "^2.3.0"
+
+"@ngrx/signals@^18.1.0":
+  version "18.1.0"
+  resolved "https://registry.yarnpkg.com/@ngrx/signals/-/signals-18.1.0.tgz#017f0c9656899c461709fc72bd57a5659e60a0b7"
+  integrity sha512-ivuOyCPXoysUxvCRotRAMtwo+ObfWN06kHz/Nnlp8GyCB6wgZaUUGe6luOQyWhrZkbu3K+oCu7HB6YCSY6zT+A==
+  dependencies:
+    tslib "^2.3.0"
+
 "@ngtools/webpack@18.2.8":
   version "18.2.8"
   resolved "https://registry.yarnpkg.com/@ngtools/webpack/-/webpack-18.2.8.tgz#9bc12e7228b0c2374a7164def24a47317ad3e84e"
@@ -5545,6 +5559,11 @@ postcss@^8.2.14, postcss@^8.4.23, postcss@^8.4.33, postcss@^8.4.43:
     nanoid "^3.3.7"
     picocolors "^1.1.0"
     source-map-js "^1.2.1"
+
+prettier@^3.3.3:
+  version "3.3.3"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-3.3.3.tgz#30c54fe0be0d8d12e6ae61dbb10109ea00d53105"
+  integrity sha512-i2tDNA0O5IrMO757lfrdQZCc2jPNDVntV0m/+4whiDfWaTKfMNgR7Qz0NAeGz/nRqF4m5/6CLzbP4/liHt12Ew==
 
 proc-log@^4.0.0, proc-log@^4.1.0, proc-log@^4.2.0:
   version "4.2.0"
