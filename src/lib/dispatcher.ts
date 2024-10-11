@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { filter, map, Observable, Subject } from 'rxjs';
+import { filter, Observable, Subject } from 'rxjs';
 import { Event, EventCreator, EventWithPropsCreator } from './event';
-
-export const SOURCE_EVENT_TYPE = Symbol('');
+import { withSourceEvent } from './source-event';
 
 @Injectable({ providedIn: 'root' })
 export class Dispatcher {
@@ -21,6 +20,10 @@ export class Dispatcher {
   on(
     ...events: Array<EventCreator | EventWithPropsCreator>
   ): Observable<Event> {
+    if (events.length === 0) {
+      return this.#events$.pipe(withSourceEvent());
+    }
+
     const eventTypes = events.reduce(
       (acc, { type }) => ({ ...acc, [type]: type }),
       {} as Record<string, string>,
@@ -28,7 +31,7 @@ export class Dispatcher {
 
     return this.#events$.pipe(
       filter(({ type }) => !!eventTypes[type]),
-      map((event) => ({ ...event, [SOURCE_EVENT_TYPE]: event.type })),
+      withSourceEvent(),
     );
   }
 }

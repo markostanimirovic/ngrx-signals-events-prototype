@@ -1,13 +1,14 @@
+export { when } from './case-reducer';
 export { Dispatcher } from './dispatcher';
-export { withEffects } from './effects';
 export {
-  emptyProps,
   type Event,
   event,
   type EventCreator,
   eventGroup,
   type EventWithProps,
   type EventWithPropsCreator,
-  props,
 } from './event';
-export { when, withReducer } from './reducer';
+export { injectDispatch } from './inject-dispatch';
+export { emptyProps, props } from './props';
+export { withEffects } from './with-effects';
+export { withReducer } from './with-reducer';

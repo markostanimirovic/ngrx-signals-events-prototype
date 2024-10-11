@@ -12,7 +12,8 @@ import {
   withHooks,
 } from '@ngrx/signals';
 import { isEvent } from './event';
-import { Dispatcher, SOURCE_EVENT_TYPE } from './dispatcher';
+import { Dispatcher } from './dispatcher';
+import { SOURCE_EVENT } from './source-event';
 
 export function withEffects<Input extends SignalStoreFeatureResult>(
   effectsFactory: (
@@ -28,7 +29,7 @@ export function withEffects<Input extends SignalStoreFeatureResult>(
           effect
             .pipe(
               tap((value) => {
-                if (isEvent(value) && !(SOURCE_EVENT_TYPE in value)) {
+                if (isEvent(value) && !(SOURCE_EVENT in value)) {
                   dispatcher.dispatch(value);
                 }
               }),

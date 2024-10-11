@@ -69,11 +69,3 @@ export function eventGroup<
 export function isEvent(value: unknown): value is Event {
   return typeof value === 'object' && value !== null && 'type' in value;
 }
-
-export function props<Props extends object>(): Props {
-  return {} as Props;
-}
-
-export function emptyProps(): void {
-  return undefined;
-}

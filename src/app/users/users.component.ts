@@ -4,7 +4,7 @@ import {
   inject,
   OnInit,
 } from '@angular/core';
-import { Dispatcher } from '@ngrx/signals/events';
+import { injectDispatch } from '@ngrx/signals/events';
 import { UsersStore } from './users.store';
 import { usersPageEvents } from './users.events';
 
@@ -14,7 +14,7 @@ import { usersPageEvents } from './users.events';
   template: `
     <h1>Users</h1>
 
-    <button (click)="onRefresh()">Refresh</button>
+    <button (click)="dispatch.refresh()">Refresh</button>
 
     @if (usersStore.isPending()) {
       <span>&nbsp; Loading...</span>
@@ -29,14 +29,10 @@ import { usersPageEvents } from './users.events';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsersComponent implements OnInit {
-  readonly #dispatcher = inject(Dispatcher);
   readonly usersStore = inject(UsersStore);
+  readonly dispatch = injectDispatch(usersPageEvents);
 
   ngOnInit() {
-    this.#dispatcher.dispatch(usersPageEvents.opened());
-  }
-
-  onRefresh(): void {
-    this.#dispatcher.dispatch(usersPageEvents.refresh());
+    this.dispatch.opened();
   }
 }
