@@ -5,7 +5,7 @@ export const usersPageEvents = eventGroup({
   source: 'Users Page',
   events: {
     opened: emptyProps(),
-    refresh: emptyProps(),
+    refreshed: emptyProps(),
   },
 });
 

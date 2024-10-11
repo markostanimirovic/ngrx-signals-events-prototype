@@ -1,27 +1,261 @@
-# NgrxSignalsEventsPrototype
+# `@ngrx/signals/events`
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.8.
+Prototype of SignalStore plugin for event-based state management.
 
-## Development server
+> [!WARNING]
+> This project is a playground for experimenting with event-driven architecture using NgRx SignalStore.
+> It is not intended for production use.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Walkthrough
 
-## Code scaffolding
+### Defining Events
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Event creators are defined using the `eventGroup` function:
 
-## Build
+```ts
+// users.events.ts
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+import { emptyProps, eventGroup, props } from '@ngrx/signals/events';
 
-## Running unit tests
+export const usersPageEvents = eventGroup({
+  source: 'Users Page',
+  events: {
+    opened: emptyProps(),
+    refreshed: emptyProps(),
+  },
+});
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+export const usersApiEvents = eventGroup({
+  source: 'Users API',
+  events: {
+    usersLoadedSuccess: props<{ users: User[] }>(),
+    usersLoadedFailure: props<{ error: string }>(),
+  },
+});
+```
 
-## Running end-to-end tests
+### Performing State Changes
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+The reducer is added to the SignalStore using the `withReducer` feature. Case reducers are defined using the `when` function:
 
-## Further help
+```ts
+// users.store.ts
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+import { when, withReducer } from '@ngrx/signals/events';
+
+export const UsersStore = signalStore(
+  { providedIn: 'root' },
+  withEntities<User>(),
+  withRequestStatus(),
+  withReducer(
+    when(usersPageEvents.opened, usersPageEvents.refreshed, setPending),
+    when(usersApiEvents.usersLoadedSuccess, ({ users }) => [
+      setAllEntities(users),
+      setFulfilled(),
+    ]),
+    when(usersApiEvents.usersLoadedError, ({ error }) => setError(error)),
+  ),
+);
+```
+
+### Performing Side Effects
+
+Side effects are added to the SignalStore using the `withEffects` feature:
+
+```ts
+// users.store.ts
+
+import { Dispatcher, withEffects } from '@ngrx/signals/events';
+
+export const UsersStore = signalStore(
+  /* ... */
+  withEffects(
+    (
+      _,
+      dispatcher = inject(Dispatcher),
+      usersService = inject(UsersService),
+    ) => ({
+      loadUsers$: dispatcher
+        .on(usersPageEvents.opened, usersPageEvents.refreshed)
+        .pipe(
+          exhaustMap(() =>
+            usersService.getAll().pipe(
+              mapResponse({
+                next: (users) => usersApiEvents.usersLoadedSuccess({ users }),
+                error: (error: { message: string }) =>
+                  usersApiEvents.usersLoadedError({ error: error.message }),
+              }),
+            ),
+          ),
+        ),
+      logError$: dispatcher
+        .on(usersApiEvents.usersLoadedError)
+        .pipe(tap(({ error }) => console.log(error))),
+    }),
+  ),
+);
+```
+
+Dispatched events can be listened to using the `Dispatcher` service.
+If an effect returns a new event, it will be dispatched automatically.
+
+### Reading State
+
+State and computed signals are accessed via SignalStore:
+
+```ts
+// users.component.ts
+
+@Component({
+  selector: 'app-users',
+  standalone: true,
+  template: `
+    <h1>Users</h1>
+
+    @if (usersStore.isPending()) {
+      <p>Loading...</p>
+    }
+
+    <ul>
+      @for (user of usersStore.entities(); track user.id) {
+        <li>{{ user.name }}</li>
+      }
+    </ul>
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class UsersComponent {
+  readonly usersStore = inject(UsersStore);
+}
+```
+
+### Dispatching Events
+
+Events are dispatched using the `Dispatcher` service:
+
+```ts
+// users.component.ts
+
+import { Dispatcher } from '@ngrx/signals/events';
+
+@Component({
+  /* ... */
+  template: `
+    <h1>Users</h1>
+
+    <button (click)="onRefresh()">Refresh</button>
+
+    <!-- ... -->
+  `,
+})
+export class UsersComponent implements OnInit {
+  readonly usersStore = inject(UsersStore);
+  readonly dispatcher = inject(Dispatcher);
+
+  ngOnInit() {
+    this.dispatcher.dispatch(usersPageEvents.opened());
+  }
+
+  onRefresh(): void {
+    this.dispatcher.dispatch(usersPageEvents.refreshed());
+  }
+}
+```
+
+It's also possible to define self-dispatching events using the `injectDispatch` function:
+
+```ts
+// users.component.ts
+
+import { injectDispatch } from '@ngrx/signals/events';
+
+@Component({
+  /* ... */
+  template: `
+    <h1>Users</h1>
+
+    <button (click)="dispatch.refreshed()">Refresh</button>
+
+    <!-- ... -->
+  `,
+})
+export class UsersComponent implements OnInit {
+  readonly usersStore = inject(UsersStore);
+  readonly dispatch = injectDispatch(usersPageEvents);
+
+  ngOnInit() {
+    this.dispatch.opened();
+  }
+}
+```
+
+### Scaling Up
+
+The reducer can be moved to a separate file using the custom SignalStore feature:
+
+```ts
+// users.reducer.ts
+
+export function withUsersReducer() {
+  return signalStoreFeature(
+    { state: type<EntityState<User> & RequestStatusState>() },
+    withReducer(
+      when(usersPageEvents.opened, usersPageEvents.refreshed, setPending),
+      when(usersApiEvents.usersLoadedSuccess, ({ users }) => [
+        setAllEntities(users),
+        setFulfilled(),
+      ]),
+      when(usersApiEvents.usersLoadedError, ({ error }) => setError(error)),
+    ),
+  );
+}
+```
+
+The same can be done for effects:
+
+```ts
+// users.effects.ts
+
+export function withUsersEffects() {
+  return signalStoreFeature(
+    withEffects(
+      (
+        _,
+        dispatcher = inject(Dispatcher),
+        usersService = inject(UsersService),
+      ) => ({
+        loadUsers$: dispatcher
+          .on(usersPageEvents.opened, usersPageEvents.refreshed)
+          .pipe(
+            exhaustMap(() =>
+              usersService.getAll().pipe(
+                mapResponse({
+                  next: (users) => usersApiEvents.usersLoadedSuccess({ users }),
+                  error: (error: { message: string }) =>
+                    usersApiEvents.usersLoadedError({ error: error.message }),
+                }),
+              ),
+            ),
+          ),
+        logError$: dispatcher
+          .on(usersApiEvents.usersLoadedError)
+          .pipe(tap(({ error }) => console.log(error))),
+      }),
+    ),
+  );
+}
+```
+
+The final SignalStore implementation will look like this:
+
+```ts
+// users.store.ts
+
+export const UsersStore = signalStore(
+  { providedIn: 'root' },
+  withEntities<User>(),
+  withRequestStatus(),
+  withUsersReducer(),
+  withUsersEffects(),
+);
+``` 

@@ -14,7 +14,7 @@ import { usersPageEvents } from './users.events';
   template: `
     <h1>Users</h1>
 
-    <button (click)="dispatch.refresh()">Refresh</button>
+    <button (click)="dispatch.refreshed()">Refresh</button>
 
     @if (usersStore.isPending()) {
       <span>&nbsp; Loading...</span>

@@ -14,7 +14,7 @@ export function withUsersReducer() {
   return signalStoreFeature(
     { state: type<EntityState<User> & RequestStatusState>() },
     withReducer(
-      when(usersPageEvents.opened, usersPageEvents.refresh, setPending),
+      when(usersPageEvents.opened, usersPageEvents.refreshed, setPending),
       when(usersApiEvents.usersLoadedSuccess, ({ users }) => [
         setAllEntities(users),
         setFulfilled(),

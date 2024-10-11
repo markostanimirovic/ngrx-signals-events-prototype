@@ -15,7 +15,7 @@ export function withUsersEffects() {
         usersService = inject(UsersService),
       ) => ({
         loadUsers$: dispatcher
-          .on(usersPageEvents.opened, usersPageEvents.refresh)
+          .on(usersPageEvents.opened, usersPageEvents.refreshed)
           .pipe(
             exhaustMap(() =>
               usersService.getAll().pipe(

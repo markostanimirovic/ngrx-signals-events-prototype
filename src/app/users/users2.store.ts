@@ -24,7 +24,7 @@ export const UsersStore = signalStore(
   withEntities<User>(),
   withRequestStatus(),
   withReducer(
-    when(usersPageEvents.opened, usersPageEvents.refresh, setPending),
+    when(usersPageEvents.opened, usersPageEvents.refreshed, setPending),
     when(usersApiEvents.usersLoadedSuccess, ({ users }) => [
       setAllEntities(users),
       setFulfilled(),
@@ -38,7 +38,7 @@ export const UsersStore = signalStore(
       usersService = inject(UsersService),
     ) => ({
       loadUsers$: dispatcher
-        .on(usersPageEvents.opened, usersPageEvents.refresh)
+        .on(usersPageEvents.opened, usersPageEvents.refreshed)
         .pipe(
           exhaustMap(() =>
             usersService.getAll().pipe(
