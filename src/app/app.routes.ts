@@ -1,7 +1,16 @@
 import { Routes } from '@angular/router';
-import { UsersComponent } from './users/users.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/users', pathMatch: 'full' },
-  { path: 'users', component: UsersComponent, title: 'Users' },
+  { path: '', redirectTo: '/artists', pathMatch: 'full' },
+  {
+    path: 'artists',
+    loadComponent: () => import('@/artists/artists.component'),
+    title: 'Artists',
+  },
+  { path: 'albums', loadChildren: () => import('@/albums/albums.routes') },
+  {
+    path: '**',
+    loadComponent: () => import('@/core/not-found/not-found.component'),
+    title: 'Not Found',
+  },
 ];

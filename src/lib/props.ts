@@ -2,6 +2,6 @@ export function props<Props extends object>(): Props {
   return {} as Props;
 }
 
-export function emptyProps(): void {
+export function emptyProps(): undefined {
   return undefined;
 }

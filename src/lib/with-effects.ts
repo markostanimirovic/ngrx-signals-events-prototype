@@ -11,9 +11,9 @@ import {
   type,
   withHooks,
 } from '@ngrx/signals';
-import { isEvent } from './event';
 import { Dispatcher } from './dispatcher';
-import { SOURCE_EVENT } from './source-event';
+import { isEvent } from './event';
+import { SOURCE_EVENT } from './events';
 
 export function withEffects<Input extends SignalStoreFeatureResult>(
   effectsFactory: (

@@ -8,6 +8,7 @@ export {
   type EventWithProps,
   type EventWithPropsCreator,
 } from './event';
+export { Events } from './events';
 export { injectDispatch } from './inject-dispatch';
 export { emptyProps, props } from './props';
 export { withEffects } from './with-effects';

@@ -10,9 +10,9 @@ import {
   type,
   withHooks,
 } from '@ngrx/signals';
-import { Dispatcher } from './dispatcher';
-import { EventCreator, EventWithPropsCreator } from './event';
 import { CaseReducerResult } from './case-reducer';
+import { EventCreator, EventWithPropsCreator } from './event';
+import { ReducerEvents } from './events';
 
 export function withReducer<State extends object>(
   ...caseReducers: CaseReducerResult<
@@ -26,9 +26,9 @@ export function withReducer<State extends object>(
   return signalStoreFeature(
     { state: type<State>() },
     withHooks({
-      onInit(store, dispatcher = inject(Dispatcher)) {
+      onInit(store, events = inject(ReducerEvents)) {
         for (const caseReducerResult of caseReducers) {
-          dispatcher
+          events
             .on(...caseReducerResult.events)
             .pipe(
               tap((event: Event) => {

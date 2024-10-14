@@ -65,17 +65,17 @@ Side effects are added to the SignalStore using the `withEffects` feature:
 ```ts
 // users.store.ts
 
-import { Dispatcher, withEffects } from '@ngrx/signals/events';
+import { Events, withEffects } from '@ngrx/signals/events';
 
 export const UsersStore = signalStore(
   /* ... */
   withEffects(
     (
       _,
-      dispatcher = inject(Dispatcher),
+      events = inject(Events),
       usersService = inject(UsersService),
     ) => ({
-      loadUsers$: dispatcher
+      loadUsers$: events
         .on(usersPageEvents.opened, usersPageEvents.refreshed)
         .pipe(
           exhaustMap(() =>
@@ -88,7 +88,7 @@ export const UsersStore = signalStore(
             ),
           ),
         ),
-      logError$: dispatcher
+      logError$: events
         .on(usersApiEvents.usersLoadedError)
         .pipe(tap(({ error }) => console.log(error))),
     }),
@@ -96,12 +96,12 @@ export const UsersStore = signalStore(
 );
 ```
 
-Dispatched events can be listened to using the `Dispatcher` service.
+Dispatched events can be listened to using the `Events` service.
 If an effect returns a new event, it will be dispatched automatically.
 
 ### Reading State
 
-State and computed signals are accessed via SignalStore:
+State and computed signals are accessed via store instance:
 
 ```ts
 // users.component.ts
@@ -221,10 +221,10 @@ export function withUsersEffects() {
     withEffects(
       (
         _,
-        dispatcher = inject(Dispatcher),
+        events = inject(Events),
         usersService = inject(UsersService),
       ) => ({
-        loadUsers$: dispatcher
+        loadUsers$: events
           .on(usersPageEvents.opened, usersPageEvents.refreshed)
           .pipe(
             exhaustMap(() =>
@@ -237,7 +237,7 @@ export function withUsersEffects() {
               ),
             ),
           ),
-        logError$: dispatcher
+        logError$: events
           .on(usersApiEvents.usersLoadedError)
           .pipe(tap(({ error }) => console.log(error))),
       }),

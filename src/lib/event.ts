@@ -27,7 +27,7 @@ type EventGroup<
   Events extends Record<string, object | void>,
 > = {
   [EventName in keyof Events]: EventName extends string
-    ? Events[EventName] extends void
+    ? undefined extends Events[EventName]
       ? EventCreator<EventType<Source, EventName>>
       : Events[EventName] extends object
         ? EventWithPropsCreator<EventType<Source, EventName>, Events[EventName]>

@@ -1,14 +1,20 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
+import { HeaderComponent } from '@/core/layout/header.component';
+import { FooterComponent } from '@/core/layout/footer.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink],
+  imports: [RouterOutlet, HeaderComponent, FooterComponent],
   template: `
-    <a routerLink="/users">Users</a>
-    <router-outlet />
+    <app-header />
+    <main>
+      <router-outlet />
+    </main>
+    <app-footer />
   `,
+  styleUrl: './app.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {}

@@ -1,37 +1,14 @@
-import { Injectable } from '@angular/core';
-import { filter, Observable, Subject } from 'rxjs';
-import { Event, EventCreator, EventWithPropsCreator } from './event';
-import { withSourceEvent } from './source-event';
+import { inject, Injectable } from '@angular/core';
+import { Event } from './event';
+import { Events, EVENTS, ReducerEvents } from './events';
 
 @Injectable({ providedIn: 'root' })
 export class Dispatcher {
-  readonly #events$ = new Subject<Event>();
+  readonly #reducerEvents = inject(ReducerEvents);
+  readonly #events = inject(Events);
 
   dispatch(event: Event): void {
-    this.#events$.next(event);
-  }
-
-  on(): Observable<Event>;
-  on<EventCreators extends Array<EventCreator | EventWithPropsCreator>>(
-    ...events: [...EventCreators]
-  ): Observable<
-    { [K in keyof EventCreators]: ReturnType<EventCreators[K]> }[number]
-  >;
-  on(
-    ...events: Array<EventCreator | EventWithPropsCreator>
-  ): Observable<Event> {
-    if (events.length === 0) {
-      return this.#events$.pipe(withSourceEvent());
-    }
-
-    const eventTypes = events.reduce(
-      (acc, { type }) => ({ ...acc, [type]: type }),
-      {} as Record<string, string>,
-    );
-
-    return this.#events$.pipe(
-      filter(({ type }) => !!eventTypes[type]),
-      withSourceEvent(),
-    );
+    this.#reducerEvents[EVENTS].next(event);
+    this.#events[EVENTS].next(event);
   }
 }

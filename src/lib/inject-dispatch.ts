@@ -1,4 +1,9 @@
-import { assertInInjectionContext, inject, Injector } from '@angular/core';
+import {
+  assertInInjectionContext,
+  inject,
+  Injector,
+  untracked,
+} from '@angular/core';
 import { Prettify } from '@ngrx/signals';
 import { Dispatcher } from './dispatcher';
 import { EventCreator, EventWithPropsCreator } from './event';
@@ -29,7 +34,8 @@ export function injectDispatch<
   return Object.entries(events).reduce(
     (acc, [eventName, eventCreator]) => ({
       ...acc,
-      [eventName]: (props?: object) => dispatcher.dispatch(eventCreator(props)),
+      [eventName]: (props?: object) =>
+        untracked(() => dispatcher.dispatch(eventCreator(props))),
     }),
     {} as InjectDispatchResult<EventGroup>,
   );

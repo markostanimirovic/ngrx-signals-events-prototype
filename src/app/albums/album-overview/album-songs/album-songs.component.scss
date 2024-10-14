@@ -1,0 +1,22 @@
+mat-spinner {
+  margin: 0 auto;
+}
+
+.song {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4rem;
+  padding: 1rem;
+  font-size: 1rem;
+  border-radius: 0;
+}
+
+p {
+  margin: 0;
+}
+
+.song-title {
+  font-weight: 500;
+}
