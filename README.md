@@ -2,10 +2,6 @@
 
 Prototype of SignalStore plugin for event-based state management.
 
-> [!WARNING]
-> This project is a playground for experimenting with event-driven architecture using NgRx SignalStore.
-> It is not intended for production use.
-
 ## Walkthrough
 
 ### Defining Events
