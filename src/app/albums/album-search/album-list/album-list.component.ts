@@ -7,7 +7,6 @@ import { Album } from '@/albums/album.model';
 
 @Component({
   selector: 'app-album-list',
-  standalone: true,
   imports: [
     DatePipe,
     RouterLink,

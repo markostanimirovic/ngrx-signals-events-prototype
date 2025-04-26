@@ -5,7 +5,6 @@ import { MatAnchor } from '@angular/material/button';
 
 @Component({
   selector: 'app-header',
-  standalone: true,
   imports: [RouterLink, MatToolbar, MatAnchor],
   template: `
     <mat-toolbar color="primary">

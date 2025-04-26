@@ -11,7 +11,6 @@ import { SortOrder } from '@/shared/models/sort-order.model';
 
 @Component({
   selector: 'app-album-filter',
-  standalone: true,
   imports: [
     FormsModule,
     MatFormField,

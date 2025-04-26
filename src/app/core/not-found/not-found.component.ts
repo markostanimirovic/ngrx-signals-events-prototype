@@ -4,7 +4,6 @@ import { MatAnchor } from '@angular/material/button';
 
 @Component({
   selector: 'app-not-found',
-  standalone: true,
   imports: [RouterLink, MatAnchor],
   template: `
     <h1>Oops!</h1>

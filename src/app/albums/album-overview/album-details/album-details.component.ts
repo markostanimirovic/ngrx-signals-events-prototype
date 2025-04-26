@@ -5,7 +5,6 @@ import { Album } from '@/albums/album.model';
 
 @Component({
   selector: 'app-album-details',
-  standalone: true,
   imports: [NgOptimizedImage, DatePipe, MatProgressSpinner],
   template: `
     @if (album(); as album) {

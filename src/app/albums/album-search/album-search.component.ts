@@ -13,7 +13,6 @@ import { albumSearchPageEvents } from './album-search.events';
 
 @Component({
   selector: 'app-album-search',
-  standalone: true,
   imports: [ProgressBarComponent, AlbumFilterComponent, AlbumListComponent],
   template: `
     <app-progress-bar [showProgress]="store.showProgress()" />

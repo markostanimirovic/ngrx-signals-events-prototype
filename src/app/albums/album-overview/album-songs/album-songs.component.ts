@@ -5,7 +5,6 @@ import { Song } from '@/songs/song.model';
 
 @Component({
   selector: 'app-album-songs',
-  standalone: true,
   imports: [MatProgressSpinner, MatCard],
   template: `
     @if (showSpinner()) {

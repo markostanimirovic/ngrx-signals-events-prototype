@@ -9,7 +9,6 @@ import { AlbumOverviewStore } from './album-overview.store';
 
 @Component({
   selector: 'app-album-overview',
-  standalone: true,
   imports: [
     MatFabButton,
     MatIcon,

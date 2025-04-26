@@ -16,7 +16,6 @@ import { artistsPageEvents } from './artists.events';
 
 @Component({
   selector: 'app-artists',
-  standalone: true,
   imports: [
     DatePipe,
     MatIconButton,
