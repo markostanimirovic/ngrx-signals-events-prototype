@@ -9,7 +9,7 @@ import {
 import { Event, EventCreator, EventWithPropsCreator } from './event';
 
 export const EVENTS = Symbol();
-export const SOURCE_EVENT = Symbol();
+export const SOURCE_TYPE = Symbol();
 
 abstract class BaseEvents {
   /**
@@ -26,7 +26,7 @@ abstract class BaseEvents {
   on(
     ...events: Array<EventCreator | EventWithPropsCreator>
   ): Observable<Event> {
-    return this[EVENTS].pipe(filterByType(events), withSourceEvent());
+    return this[EVENTS].pipe(filterByType(events), withSourceType());
   }
 }
 
@@ -43,22 +43,19 @@ function filterByType<T extends Event>(
     return (source$) => source$;
   }
 
-  const eventTypes = toEventTypes(events);
-  return filter<T>(({ type }) => !!eventTypes[type]);
+  const eventMap = toEventCreatorMap(events);
+  return filter<T>(({ type }) => !!eventMap[type]);
 }
 
-function toEventTypes(
+function toEventCreatorMap(
   events: Array<EventCreator | EventWithPropsCreator>,
-): Record<string, string> {
-  return events.reduce(
-    (acc, { type }) => ({ ...acc, [type]: type }),
-    {} as Record<string, string>,
-  );
+): Record<string, EventCreator | EventWithPropsCreator> {
+  return events.reduce((acc, event) => ({ ...acc, [event.type]: event }), {});
 }
 
-function withSourceEvent<T extends Event>(): MonoTypeOperatorFunction<T> {
+function withSourceType<T extends Event>(): MonoTypeOperatorFunction<T> {
   return map(({ ...event }) => {
-    Object.defineProperty(event, SOURCE_EVENT, { value: event.type });
+    Object.defineProperty(event, SOURCE_TYPE, { value: event.type });
     return event;
   });
 }

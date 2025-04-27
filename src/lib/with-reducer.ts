@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { merge, Observable, tap } from 'rxjs';
+import { merge, tap } from 'rxjs';
 import {
   EmptyFeatureResult,
   getState,
@@ -27,19 +27,17 @@ export function withReducer<State extends object>(
     { state: type<State>() },
     withHooks({
       onInit(store, events = inject(ReducerEvents)) {
-        const updates: Observable<Event>[] = [];
-        for (const caseReducerResult of caseReducers) {
-          const update$ = events.on(...caseReducerResult.events).pipe(
+        const updates = caseReducers.map((caseReducer) =>
+          events.on(...caseReducer.events).pipe(
             tap((event: Event) => {
               const state = getState(store);
-              const result = caseReducerResult.reducer(event, state);
+              const result = caseReducer.reducer(event, state);
               const updaters = Array.isArray(result) ? result : [result];
 
               patchState(store, ...updaters);
             }),
-          );
-          updates.push(update$);
-        }
+          ),
+        );
 
         merge(...updates)
           .pipe(takeUntilDestroyed())

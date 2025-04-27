@@ -13,7 +13,7 @@ import {
 } from '@ngrx/signals';
 import { Dispatcher } from './dispatcher';
 import { isEvent } from './event';
-import { SOURCE_EVENT } from './events';
+import { SOURCE_TYPE } from './events';
 
 export function withEffects<Input extends SignalStoreFeatureResult>(
   effectsFactory: (
@@ -25,18 +25,15 @@ export function withEffects<Input extends SignalStoreFeatureResult>(
     withHooks({
       onInit(store, dispatcher = inject(Dispatcher)) {
         const effectSources = effectsFactory(store);
-        const effects: Observable<unknown>[] = [];
-
-        for (const effectSource$ of Object.values(effectSources)) {
-          const effect$ = effectSource$.pipe(
+        const effects = Object.values(effectSources).map((effectSource$) =>
+          effectSource$.pipe(
             tap((value) => {
-              if (isEvent(value) && !(SOURCE_EVENT in value)) {
+              if (isEvent(value) && !(SOURCE_TYPE in value)) {
                 dispatcher.dispatch(value);
               }
             }),
-          );
-          effects.push(effect$);
-        }
+          ),
+        );
 
         merge(...effects)
           .pipe(takeUntilDestroyed())
