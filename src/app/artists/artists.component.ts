@@ -4,11 +4,10 @@ import {
   inject,
   OnInit,
 } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { MatCard, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
+import { MatCard } from '@angular/material/card';
 import { injectDispatch } from '@ngrx/signals/events';
 import { ProgressBarComponent } from '@/shared/ui/progress-bar.component';
 import { ArtistsStore } from './artists.store';
@@ -17,13 +16,10 @@ import { artistsPageEvents } from './artists.events';
 @Component({
   selector: 'app-artists',
   imports: [
-    DatePipe,
     MatIconButton,
     MatIcon,
     MatProgressSpinner,
     MatCard,
-    MatCardSubtitle,
-    MatCardTitle,
     ProgressBarComponent,
   ],
   template: `

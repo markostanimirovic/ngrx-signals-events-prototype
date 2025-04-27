@@ -1,6 +1,6 @@
 import { computed, inject } from '@angular/core';
 import { signalStore, withComputed, withState } from '@ngrx/signals';
-import { when, withReducer } from '@ngrx/signals/events';
+import { on, withReducer } from '@ngrx/signals/events';
 import { SortOrder } from '@/shared/models/sort-order.model';
 import { AlbumsStore } from '@/albums/albums.store';
 import { searchAlbums, sortAlbums } from '@/albums/album.model';
@@ -20,7 +20,7 @@ export const AlbumSearchStore = signalStore(
     return { albums, albumsCount, showProgress, showSpinner };
   }),
   withReducer(
-    when(albumSearchPageEvents.queryChanged, ({ query }) => ({ query })),
-    when(albumSearchPageEvents.orderChanged, ({ order }) => ({ order })),
+    on(albumSearchPageEvents.queryChanged, ({ query }) => ({ query })),
+    on(albumSearchPageEvents.orderChanged, ({ order }) => ({ order })),
   ),
 );

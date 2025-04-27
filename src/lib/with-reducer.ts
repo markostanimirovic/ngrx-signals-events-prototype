@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { tap } from 'rxjs';
+import { merge, Observable, tap } from 'rxjs';
 import {
   EmptyFeatureResult,
   getState,
@@ -11,7 +11,7 @@ import {
   withHooks,
 } from '@ngrx/signals';
 import { CaseReducerResult } from './case-reducer';
-import { EventCreator, EventWithPropsCreator } from './event';
+import { Event, EventCreator, EventWithPropsCreator } from './event';
 import { ReducerEvents } from './events';
 
 export function withReducer<State extends object>(
@@ -20,28 +20,30 @@ export function withReducer<State extends object>(
     Array<EventCreator | EventWithPropsCreator>
   >[]
 ): SignalStoreFeature<
-  { state: State; computed: {}; methods: {} },
+  { state: State; props: {}; methods: {} },
   EmptyFeatureResult
 > {
   return signalStoreFeature(
     { state: type<State>() },
     withHooks({
       onInit(store, events = inject(ReducerEvents)) {
+        const updates: Observable<Event>[] = [];
         for (const caseReducerResult of caseReducers) {
-          events
-            .on(...caseReducerResult.events)
-            .pipe(
-              tap((event: Event) => {
-                const state = getState(store);
-                const result = caseReducerResult.reducer(event, state);
-                const updaters = Array.isArray(result) ? result : [result];
+          const update$ = events.on(...caseReducerResult.events).pipe(
+            tap((event: Event) => {
+              const state = getState(store);
+              const result = caseReducerResult.reducer(event, state);
+              const updaters = Array.isArray(result) ? result : [result];
 
-                patchState(store, ...updaters);
-              }),
-              takeUntilDestroyed(),
-            )
-            .subscribe();
+              patchState(store, ...updaters);
+            }),
+          );
+          updates.push(update$);
         }
+
+        merge(...updates)
+          .pipe(takeUntilDestroyed())
+          .subscribe();
       },
     }),
   );

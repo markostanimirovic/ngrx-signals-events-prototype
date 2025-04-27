@@ -20,7 +20,7 @@ type CaseReducer<
   | PartialStateUpdater<State>
   | Array<Partial<State> | PartialStateUpdater<State>>;
 
-export function when<
+export function on<
   State extends object,
   EventCreators extends Array<EventCreator | EventWithPropsCreator>,
 >(

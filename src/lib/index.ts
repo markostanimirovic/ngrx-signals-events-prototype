@@ -1,4 +1,4 @@
-export { when } from './case-reducer';
+export { on } from './case-reducer';
 export { Dispatcher } from './dispatcher';
 export {
   type Event,

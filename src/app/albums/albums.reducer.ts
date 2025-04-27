@@ -1,6 +1,6 @@
 import { signalStoreFeature, type } from '@ngrx/signals';
 import { EntityState, setEntities, setEntity } from '@ngrx/signals/entities';
-import { when, withReducer } from '@ngrx/signals/events';
+import { on, withReducer } from '@ngrx/signals/events';
 import {
   RequestStatusState,
   setError,
@@ -16,19 +16,19 @@ export function withAlbumsReducer() {
   return signalStoreFeature(
     { state: type<EntityState<Album> & RequestStatusState>() },
     withReducer(
-      when(albumSearchPageEvents.opened, setPending),
-      when(albumOverviewPageEvents.idChanged, ({ albumId }, { entityMap }) =>
+      on(albumSearchPageEvents.opened, setPending),
+      on(albumOverviewPageEvents.idChanged, ({ albumId }, { entityMap }) =>
         entityMap[albumId] ? {} : setPending(),
       ),
-      when(albumsApiEvents.loadedSuccess, ({ albums }, {}) => [
+      on(albumsApiEvents.loadedSuccess, ({ albums }, {}) => [
         setEntities(albums),
         setFulfilled(),
       ]),
-      when(albumsApiEvents.loadedByIdSuccess, ({ album }) => [
+      on(albumsApiEvents.loadedByIdSuccess, ({ album }) => [
         setEntity(album),
         setFulfilled(),
       ]),
-      when(
+      on(
         albumsApiEvents.loadedError,
         albumsApiEvents.loadedByIdError,
         ({ error }) => setError(error),

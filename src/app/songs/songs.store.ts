@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { filter, switchMap } from 'rxjs';
 import { signalStore, withState } from '@ngrx/signals';
 import { setEntities, withEntities } from '@ngrx/signals/entities';
-import { Events, when, withEffects, withReducer } from '@ngrx/signals/events';
+import { Events, on, withEffects, withReducer } from '@ngrx/signals/events';
 import { mapResponse } from '@ngrx/operators';
 import {
   setError,
@@ -22,12 +22,10 @@ export const SongsStore = signalStore(
   withEntities<Song>(),
   withRequestStatus(),
   withReducer(
-    when(
-      albumOverviewPageEvents.idChanged,
-      ({ albumId }, { songsByAlbumMap }) =>
-        songsByAlbumMap[albumId] ? {} : setPending(),
+    on(albumOverviewPageEvents.idChanged, ({ albumId }, { songsByAlbumMap }) =>
+      songsByAlbumMap[albumId] ? {} : setPending(),
     ),
-    when(
+    on(
       songsApiEvents.loadedByAlbumIdSuccess,
       ({ songs, albumId }, { songsByAlbumMap }) => [
         setEntities(songs),
@@ -40,7 +38,7 @@ export const SongsStore = signalStore(
         },
       ],
     ),
-    when(songsApiEvents.loadedByAlbumIdError, ({ error }) => setError(error)),
+    on(songsApiEvents.loadedByAlbumIdError, ({ error }) => setError(error)),
   ),
   withEffects(
     (

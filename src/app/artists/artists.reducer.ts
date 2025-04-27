@@ -1,6 +1,6 @@
 import { signalStoreFeature, type } from '@ngrx/signals';
 import { EntityState, setAllEntities } from '@ngrx/signals/entities';
-import { when, withReducer } from '@ngrx/signals/events';
+import { on, withReducer } from '@ngrx/signals/events';
 import {
   RequestStatusState,
   setError,
@@ -14,12 +14,12 @@ export function withArtistsReducer() {
   return signalStoreFeature(
     { state: type<EntityState<Artist> & RequestStatusState>() },
     withReducer(
-      when(artistsPageEvents.opened, artistsPageEvents.refreshed, setPending),
-      when(artistsApiEvents.loadedSuccess, ({ artists }) => [
+      on(artistsPageEvents.opened, artistsPageEvents.refreshed, setPending),
+      on(artistsApiEvents.loadedSuccess, ({ artists }) => [
         setAllEntities(artists),
         setFulfilled(),
       ]),
-      when(artistsApiEvents.loadedError, ({ error }) => setError(error)),
+      on(artistsApiEvents.loadedError, ({ error }) => setError(error)),
     ),
   );
 }
