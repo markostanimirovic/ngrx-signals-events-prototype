@@ -1,4 +1,6 @@
-# `@ngrx/signals/events`
+# [Archived] `@ngrx/signals/events`
+
+> **⚠️ This repository is archived. [The Events plugin is now part of the core `@ngrx/signals` package.](https://github.com/ngrx/platform/tree/main/modules/signals/events)**
 
 Prototype of SignalStore plugin for event-based state management.
 
